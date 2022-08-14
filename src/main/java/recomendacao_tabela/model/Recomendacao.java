@@ -1,4 +1,4 @@
-package recomendacao_tabela;
+package recomendacao_tabela.model;
 
 public class Recomendacao {
     private String fatorRecomendacao;
@@ -15,23 +15,11 @@ public class Recomendacao {
         return fatorRecomendacao;
     }
 
-    public void setFatorRecomendacao(String fatorRecomendacao) {
-        this.fatorRecomendacao = fatorRecomendacao;
-    }
-
     public String getApiMonolitica() {
         return apiMonolitica;
     }
 
-    public void setApiMonolitica(String apiMonolitica) {
-        this.apiMonolitica = apiMonolitica;
-    }
-
     public String getMicrosservicos() {
         return microsservicos;
-    }
-
-    public void setMicrosservicos(String microsservicos) {
-        this.microsservicos = microsservicos;
     }
 }

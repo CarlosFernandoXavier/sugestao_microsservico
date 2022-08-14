@@ -1,13 +1,9 @@
-package recomendacao_tabela;
+package recomendacao_tabela.model;
 
 public class Microsservico {
 
     private String servicos;
     private Integer quantidadeServicos;
-
-    public Microsservico() {
-        quantidadeServicos = 0;
-    }
 
     public Microsservico(String servicos, Integer quantidadeServicos) {
         this.servicos = servicos;
