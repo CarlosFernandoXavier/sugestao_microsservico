@@ -14,6 +14,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
 
+    //Biblioteca para gerar PDF
+    implementation group: 'com.itextpdf', name: 'layout', version: '7.2.3'
+    implementation group: 'com.itextpdf', name: 'barcodes', version: '7.2.3'
+    implementation group: 'com.itextpdf', name: 'kernel', version: '7.2.3'
+
+
 }
 
 test {
