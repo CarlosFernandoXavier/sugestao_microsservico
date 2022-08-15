@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface ILeitorService {
 
-    void mapearFuncionalidades(Map<String, List<String>> funcionalidades,
-                               Map<String, Integer> pesoFuncionalidades);
+    void mapearFuncionalidades(
+            List<String> pathArquivos,
+            Map<String, List<String>> funcionalidades,
+            Map<String, Integer> pesoFuncionalidades);
 }

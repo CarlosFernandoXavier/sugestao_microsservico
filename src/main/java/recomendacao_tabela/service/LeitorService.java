@@ -11,19 +11,11 @@ import java.util.Map;
 
 public class LeitorService implements ILeitorService {
 
-    //TODO esta classe vou precisar mexer para ler uma pasta zipada contendo as funcionalidades
-
-    public void mapearFuncionalidades(Map<String, List<String>> funcionalidades,
+    public void mapearFuncionalidades(List<String> pathArquivos,
+                                      Map<String, List<String>> funcionalidades,
                                       Map<String, Integer> pesoFuncionalidades) {
-
-        List<String> arquivos = List.of("src/main/resources/gerar_relatorio_por_filial.txt",
-                "src/main/resources/buscar_itens.txt",
-                "src/main/resources/buscar_item_pelo_id.txt",
-                "src/main/resources/buscar_filiais.txt");
-
         List<String> classes;
-
-        for (String nomeArquivo : arquivos) {
+        for (String nomeArquivo : pathArquivos) {
             File file = new File(nomeArquivo);
 
             String nomeFuncionalidade = file.getName().substring(0, file.getName().lastIndexOf("."));
