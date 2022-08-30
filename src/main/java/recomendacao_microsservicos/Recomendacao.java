@@ -1,35 +1,31 @@
 package recomendacao_microsservicos;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Recomendacao {
 
     private String nome;
-    private List<Map<String, List<Classe>>> funcionalidades;
+    private List<Classe> classes;
 
     public Recomendacao(String nome) {
         this.nome = nome;
-        funcionalidades = new ArrayList<>();
+        classes = new ArrayList<>();
     }
 
-    public void adicionarFuncionalidade(String funcionalidade, List<Classe> classes) {
-        Map<String, List<Classe>> map = new HashMap<>();
-        map.put(funcionalidade, classes);
-        funcionalidades.add(map);
-    }
-
-    public void adicionarFuncionalidade(Map<String, List<Classe>> map) {
-        funcionalidades.add(map);
+    public void adicionarClasse(Classe classe) {
+        classes.add(classe);
     }
 
     public String getNome() {
         return nome;
     }
 
-    public List<Map<String, List<Classe>>> getFuncionalidades() {
-        return funcionalidades;
+    public List<Classe> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<Classe> classes) {
+        this.classes = classes;
     }
 }

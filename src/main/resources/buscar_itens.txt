@@ -1,0 +1,7 @@
+com.unisinos.sistema.adapter.inbound.controller.ItemController.getItems (Integer)
+com.unisinos.sistema.application.service.ItemServiceImpl.getItem (Integer)
+com.unisinos.sistema.adapter.outbound.repository.PostgresItemRepository.getAllItems ()
+com.unisinos.sistema.adapter.outbound.entity.ItemEntity.<init> ()
+com.unisinos.sistema.adapter.inbound.mapper.ItemMapper.mapToResponseList (java.util.List)
+com.unisinos.sistema.adapter.inbound.mapper.ItemMapper.mapToResponse (com.unisinos.sistema.adapter.outbound.entity.ItemEntity)
+com.unisinos.sistema.adapter.outbound.builder.ItemBuilder.builder ()

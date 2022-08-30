@@ -12,6 +12,7 @@ public class RecomendacaoTest {
 
     //Similaridade até 83%, funciona. Maior que isso, gera 1 microsserviço a mais
     private static final Integer PORCENTAGEM_SIMILARIDADE = 83;
+
     public static void main(String[] args) {
 
 
@@ -85,19 +86,84 @@ public class RecomendacaoTest {
             Recomendacao m = new Recomendacao("Microsservico " +
                     (recomendacao.size() + 1));
 
-            microsservicos.get(indice).getFuncionalidades().forEach(funcionalidade ->
-                    m.adicionarFuncionalidade(getEstruturaFuncionalidade(estrutura, funcionalidade)));
+            for(String funcionalidade : microsservicos.get(indice).getFuncionalidades()) {
+                m = getEstruturaFuncionalidade(estrutura, funcionalidade, m);
+
+            }
             recomendacao.add(m);
         }
 
         return recomendacao;
     }
 
-    public static Map<String, List<Classe>> getEstruturaFuncionalidade(List<Map<String,
-            List<Classe>>> estrutura, String funcionalidade) {
-        return estrutura.stream()
-                .filter(m -> !Objects.isNull(m.get(funcionalidade)))
-                .findFirst().orElse(null);
+    public static Recomendacao getEstruturaFuncionalidade(List<Map<String,
+            List<Classe>>> estrutura, String funcionalidade, Recomendacao recomendacao) {
+
+        for (Map<String, List<Classe>> estruturaMap : estrutura) {
+            if (!Objects.isNull(estruturaMap.get(funcionalidade))) {
+                List<Classe> classes = estruturaMap.get(funcionalidade);
+                if (recomendacao.getClasses().isEmpty()) {
+                    recomendacao.setClasses(classes);
+                } else {
+                    Integer a = 90;
+
+                    for (Classe classeNova : classes) {
+                        if (!ehClasseExistente(recomendacao, classeNova)) {
+                            recomendacao.adicionarClasse(classeNova);
+                        } else {
+                            Integer indice = getIndiceClasseExistente(recomendacao, classeNova);
+                            Classe classeSalva = recomendacao.getClasses().get(indice);
+
+                            //buscar todos os métodos ainda não adicionados;
+                            List<String> metodosNovos = getMetodosNaoAdicionados(classeSalva, classeNova.getMetodos());
+                            if (!metodosNovos.isEmpty()) {
+                                recomendacao.getClasses().remove(classeSalva);
+                                metodosNovos.forEach(classeSalva::adicionarMetodo);
+                                recomendacao.getClasses().add(indice, classeSalva);
+                            }
+                        }
+                    }
+                }
+               // break;
+            }
+        }
+        return recomendacao;
+    }
+
+    public static boolean ehClasseExistente(Recomendacao recomendacao, Classe classeNova) {
+        return recomendacao.getClasses().stream()
+                .filter(classe -> classe.getNomeClasse().equals(classeNova.getNomeClasse()))
+                .findFirst()
+                .isPresent();
+    }
+
+    public static Integer getIndiceClasseExistente(Recomendacao recomendacao, Classe classeNova) {
+        Integer indice = null;
+        for (int contador = 0; contador < recomendacao.getClasses().size(); contador++) {
+            if (recomendacao.getClasses().get(contador).getNomeClasse().equals(classeNova.getNomeClasse())) {
+                indice = contador;
+                break;
+            }
+        }
+        return indice;
+    }
+
+    public static List<String> getMetodosNaoAdicionados(Classe classe, List<String> metodosNovos) {
+        List<String> metodos = new ArrayList<>();
+
+        for (String metodoNovo : metodosNovos) {
+            if (!ehMetodoAdicionado(classe, metodoNovo)) {
+                metodos.add(metodoNovo);
+            }
+        }
+        return metodos;
+    }
+
+    public static boolean ehMetodoAdicionado(Classe classe, String metodo) {
+        return classe.getMetodos().stream()
+                .filter(metodoSalvo -> metodoSalvo.equals(metodo))
+                .findFirst()
+                .isPresent();
     }
 
 
@@ -195,7 +261,8 @@ public class RecomendacaoTest {
 
     public static void gerarEstrutura(List<Map<String, List<Classe>>> funcionalidades) {
 
-        List<String> arquivos = List.of("src/main/resources/gerar_relatorio_por_filial.txt", "src/main/resources/buscar_itens.txt",
+        List<String> arquivos = List.of("src/main/resources/gerar_relatorio_por_filial.txt",
+                "src/main/resources/buscar_itens.txt",
                 "src/main/resources/buscar_item_pelo_id.txt",
                 "src/main/resources/buscar_filiais.txt");
 
