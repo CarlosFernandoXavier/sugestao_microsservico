@@ -14,26 +14,26 @@ import java.util.zip.ZipInputStream;
 
 public class RecomendacaoTest {
 
-    private static final Integer LIMITE_DECOMPOSICAO = 50;
-    private final static String DIRETORIO_LEITURA = "src/main/resources/arquivos.zip";
-    //private final static String DIRETORIO_LEITURA = "src/main/resources/trace-shopping-cart.zip";
+    private static final Integer LIMITE_DECOMPOSICAO = 45;
+    //private final static String DIRETORIO_LEITURA = "src/main/resources/arquivos.zip";
+    private final static String DIRETORIO_LEITURA = "src/main/resources/trace-shopping-cart.zip";
     //private final static String DIRETORIO_LEITURA = "src/main/resources/trace-blog-api.zip";
 
     public static void main(String[] args) {
         List<String> arquivos = buscarNomeArquivos(DIRETORIO_LEITURA);
         //TODO pacotes que serão considerados
-      /*  List<String> packages = List.of("me.zhulin.shopapi.api",
-                "me.zhulin.shopapi.service.impl");*/
+        List<String> packages = List.of("me.zhulin.shopapi.api",
+                "me.zhulin.shopapi.service.impl");
 
-        List<String> packages = List.of("com.unisinos.sistema.adapter.inbound.controller",
+        /*List<String> packages = List.of("com.unisinos.sistema.adapter.inbound.controller",
                 "com.unisinos.sistema.application.service",
                 "com.unisinos.sistema.adapter.outbound.repository");
-
-      /*  List<String> packages = List.of("com.springboot.blog.controller",
+*/
+     /*   List<String> packages = List.of("com.springboot.blog.controller",
                 "com.springboot.blog.service.impl");*/
 
         Map<String, List<Class>> functionalities = convertFunctionalityFiles(arquivos, packages);
-        Map<String, List<Column>> similarityTable = createSimilarityTable(functionalities);
+        Map<String, List<Column>> similarityTable = createSimilarityTable(functionalities, packages);
         List<Microservice> microsservicos = groupFunctionalitiesBySimilatiry(similarityTable, functionalities);
         printMicrosservices(microsservicos);
 
@@ -50,7 +50,7 @@ public class RecomendacaoTest {
                     .filter(column -> column.getThreshold() >= LIMITE_DECOMPOSICAO)
                     .collect(Collectors.toList());
 
-            if (similarities.isEmpty()) {
+            if (microservices.isEmpty()) {
                 List<ClassResponse> classResponses = new ArrayList<>();
                 gerarClassesParaMicrosservico(funcionalidadesMap, functionalities,
                         classResponses);
@@ -69,8 +69,8 @@ public class RecomendacaoTest {
                 similarities.add(functionalities);
             } else {
                 //PAra cada coluna, preciso ver se a funcionalidade já não existe em algum microsserviço
-                Integer indiceMicrosservico1 = getIndiceMicrosservico(similarities, functionalities);
-                Integer indiceMicrosservico2 = getIndiceMicrosservico(similarities, colunasFiltradas);
+                Integer indiceMicrosservico1 = getIndiceMicrosservico(microservices, functionalities);
+                Integer indiceMicrosservico2 = getIndiceMicrosservico(microservices, colunasFiltradas);
 
                 if (Objects.isNull(indiceMicrosservico1) && Objects.isNull(indiceMicrosservico2)) {
                     List<ClassResponse> classResponses = new ArrayList<>();
@@ -117,10 +117,10 @@ public class RecomendacaoTest {
         return microservices;
     }
 
-    private static Integer getIndiceMicrosservico(List<String> microsservicos, String functionality) {
+    private static Integer getIndiceMicrosservico(List<Microservice> microsservicos, String functionality) {
         Integer indice = null;
         for (int contador = 0; contador < microsservicos.size(); contador++) {
-            if (microsservicos.get(contador).contains(functionality)) {
+            if (microsservicos.get(contador).getFunctionalities().contains(functionality)) {
                 indice = contador;
                 break;
             }
@@ -128,11 +128,11 @@ public class RecomendacaoTest {
         return indice;
     }
 
-    private static Integer getIndiceMicrosservico(List<String> microsservicos, List<Column> functionalities) {
+    private static Integer getIndiceMicrosservico(List<Microservice> microsservicos, List<Column> functionalities) {
         Integer indice = null;
         for (Column functionality : functionalities) {
             for (int contador = 0; contador < microsservicos.size(); contador++) {
-                if (microsservicos.get(contador).contains(functionality.getNomeFuncionalidade())) {
+                if (microsservicos.get(contador).getFunctionalities().contains(functionality.getNomeFuncionalidade())) {
                     indice = contador;
                     break;
                 }
@@ -194,7 +194,8 @@ public class RecomendacaoTest {
         return indice;
     }
 
-    private static Map<String, List<Column>> createSimilarityTable(Map<String, List<Class>> functionalities) {
+    private static Map<String, List<Column>> createSimilarityTable(Map<String, List<Class>> functionalities,
+                                                                   List<String> packages) {
 
         Map<String, List<Column>> similarityTable = new HashMap<>();
 
